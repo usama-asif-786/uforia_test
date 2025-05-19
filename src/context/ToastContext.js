@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onMessage, fetchLikedFormSubmissions } from '../service/mockServer';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { onMessage, fetchLikedFormSubmissions, saveLikedFormSubmission } from '../service/mockServer';
 
 const ToastContext = createContext();
 
@@ -31,6 +31,21 @@ export const ToastProvider = ({ children }) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  const likeSubmission = useCallback(async (submission) => {
+    const updated = {
+      ...submission,
+      data: { ...submission.data, liked: true },
+    };
+
+    try {
+      await saveLikedFormSubmission(updated);
+      setLikedSubmissions((prev) => [...prev, updated]);
+      removeToast(submission.id);
+    } catch (err) {
+      alert('Failed to save liked submission');
+    }
+  }, []);
+
   return (
     <ToastContext.Provider
       value={{
@@ -39,6 +54,7 @@ export const ToastProvider = ({ children }) => {
         loading,
         error,
         removeToast,
+        likeSubmission,
       }}
     >
       {children}

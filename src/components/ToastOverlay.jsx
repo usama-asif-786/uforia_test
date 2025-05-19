@@ -3,10 +3,11 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useToastContext } from '../context/ToastContext.js';
 
 function ToastOverlay() {
-  const { toasts, removeToast } = useToastContext();
+  const { toasts, removeToast, likeSubmission } = useToastContext();
 
   return (
     <>
@@ -23,14 +24,17 @@ function ToastOverlay() {
             variant="filled"
             sx={{ backgroundColor: '#202229' }}
             action={
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={() => removeToast(toast.id)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
+              <>
+                <LikeButton submission={toast} onLike={likeSubmission} />
+                <IconButton
+                  size="small"
+                  aria-label="close"
+                  color="inherit"
+                  onClick={() => removeToast(toast.id)}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </>
             }
             onClose={() => removeToast(toast.id)}
           >
@@ -44,6 +48,28 @@ function ToastOverlay() {
         </Snackbar>
       ))}
     </>
+  );
+}
+
+function LikeButton({ submission, onLike }) {
+  const [loading, setLoading] = React.useState(false);
+
+  const handleClick = async () => {
+    setLoading(true);
+    await onLike(submission);
+    setLoading(false);
+  };
+
+  return (
+    <IconButton
+      color="inherit"
+      onClick={handleClick}
+      disabled={loading}
+      size="small"
+      sx={{ color: loading ? 'inherit' : '#7ccccd' }}
+    >
+      {loading ? <CircularProgress size={20} /> : 'LIKE'}
+    </IconButton>
   );
 }
 
