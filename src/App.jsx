@@ -2,6 +2,7 @@ import React from 'react';
 import Container from '@mui/material/Container';
 import Header from './Header.jsx';
 import Content from './Content';
+import ToastOverlay from './components/ToastOverlay';
 import { ToastProvider } from './context/ToastContext.js';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <Container>
         <Content />
       </Container>
+      <ToastOverlay />
     </ToastProvider>
   );
 }
